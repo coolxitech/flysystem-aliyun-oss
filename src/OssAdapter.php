@@ -72,16 +72,26 @@ class OssAdapter implements FilesystemAdapter
         if (! is_resource($contents)) {
             throw UnableToWriteFile::atLocation($path, 'The contents is invalid resource.');
         }
-        $i = 0;
-        $bufferSize = 1000000; // 1M
-        while (! feof($contents)) {
-            if (false === $buffer = fread($contents, $block = $bufferSize)) {
-                throw UnableToWriteFile::atLocation($path, 'fread failed');
-            }
-            $position = $i * $bufferSize;
-            $size = $this->oss->appendObject($this->bucket, $path, $buffer, $position, $this->getOssOptions($config));
-            ++$i;
+
+        rewind($contents);
+
+        $fileContents = stream_get_contents($contents);
+
+        if ($fileContents === false) {
+            throw UnableToWriteFile::atLocation($path, 'Failed to read stream contents.');
         }
+
+
+        $result = $this->oss->putObject(
+            $this->bucket,
+            $path,
+            $fileContents,
+            $this->getOssOptions($config)
+        );
+
+        $this->supports->setFlashData($result);
+
+
         fclose($contents);
     }
 

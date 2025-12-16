@@ -1,5 +1,5 @@
 {
-  "name": "xxtime/flysystem-aliyun-oss",
+  "name": "coolxitech/flysystem-aliyun-oss",
   "type": "library",
   "description": "AliYun OSS adapter for flysystem. Support PHP8. aliyuncs/oss-sdk-php ~2.6",
   "keywords": [
